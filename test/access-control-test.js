@@ -2,10 +2,10 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Access Control", () => {
-  let deployer, attacker;
+  let deployer, attacker, user;
 
   beforeEach(async function () {
-    [deployer, attacker] = await ethers.getSigners();
+    [deployer, attacker, user] = await ethers.getSigners();
 
     const AgreedPrice = await ethers.getContractFactory("AgreedPrice", deployer);
     this.agreedPrice = await AgreedPrice.deploy(100);
@@ -27,6 +27,20 @@ describe("Access Control", () => {
       await expect(this.agreedPrice.connect(attacker).updatePrice(1000)).to.be.revertedWith("Restricted Access");
     });
 
+    it("Should be possible for the owner to transfer ownership ", async function () {
+      await this.agreedPrice.changeOwner(user.address);
+      expect(await this.agreedPrice.owner()).to.eq(user.address);
+    });
+    
+    it("Should be possible for a new owner to call updatePrice", async function () {
+      await this.agreedPrice.changeOwner(user.address);
+      await this.agreedPrice.connect(user).updatePrice(1000);
+      expect(await this.agreedPrice.price()).to.eq(1000);
+    });
+    
+    it("Should not be possible for other than the owner to transfer ownership", async function () {
+      await expect(this.agreedPrice.connect(attacker).changeOwner(attacker.address)).to.be.revertedWith("Restricted Access");
+    });
 
   });
 });
