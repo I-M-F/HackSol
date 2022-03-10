@@ -13,7 +13,8 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
-HackSol
+# HackSol
+
 Smart Contract Security - Hardhat Project
 
 The objective of this Project is to understand how to develop a smart contract in the safest way possible.
