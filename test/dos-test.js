@@ -55,5 +55,34 @@ describe("DoS", function () {
     });
   });
 
+  describe("AuctionV2", function () {
+    describe("Pull over push solution", function () {
+      it("A user should be able to be refunded for a small number of bids", async function () {
+        await this.auctionV2.connect(user).bid({ value: ethers.utils.parseEther("1") });
 
+        await this.auctionV2.bid({ value: ethers.utils.parseEther("2") });
+
+        const userBalanceBefore = await ethers.provider.getBalance(user.address);
+
+        await this.auctionV2.connect(user).withdrawRefund();
+
+        const userBalanceAfter = await ethers.provider.getBalance(user.address);
+
+        expect(userBalanceAfter).to.be.gt(userBalanceBefore);
+      });
+      it("A user should be able to be refunded for a very large number of bids", async function () {
+        for (let i = 0; i < 1500; i++) {
+          await this.auctionV2.connect(user).bid({ value: ethers.utils.parseEther("0.0001") + i });
+        }
+
+        const userBalanceBefore = await ethers.provider.getBalance(user.address);
+
+        await this.auctionV2.connect(user).withdrawRefund();
+
+        const userBalanceAfter = await ethers.provider.getBalance(user.address);
+
+        expect(userBalanceAfter).to.be.gt(userBalanceBefore);
+      });
+    });
+  });
 });
