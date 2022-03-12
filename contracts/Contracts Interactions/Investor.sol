@@ -25,6 +25,6 @@ contract Investor is Ownable {
   }
 
   receive() external payable {
-   payable(owner()).transfer(address(this).balance);
+    payable(owner()).transfer(address(this).balance);
   }
 }
