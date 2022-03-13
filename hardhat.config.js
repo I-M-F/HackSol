@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 
-require("hardhat-gas-reporter");
+// require("hardhat-gas-reporter");
 require("solidity-coverage");
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -38,6 +38,10 @@ module.exports = {
     hardhat: {
       initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
       blockGasLimit: 20000000,
+      mining: {
+        auto: false,
+        interval: 3000,
+      }
     },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
